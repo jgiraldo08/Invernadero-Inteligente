@@ -1,0 +1,30 @@
+Código de Prueba RELAY
+
+#define RELE 26
+
+void setup() {
+  Serial.begin(115200);
+
+  // La mayoria de modulos se activan con LOW
+  digitalWrite(RELE, HIGH);
+  pinMode(RELE, OUTPUT);
+
+  Serial.println("PRUEBA DEL RELE");
+}
+
+void loop() {
+
+  // Activar rele
+  digitalWrite(RELE, LOW);
+
+  Serial.println("RELE ENCENDIDO");
+
+  delay(3000);
+
+  // Desactivar rele
+  digitalWrite(RELE, HIGH);
+
+  Serial.println("RELE APAGADO");
+
+  delay(3000);
+}

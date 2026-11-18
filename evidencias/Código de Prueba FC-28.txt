@@ -1,0 +1,47 @@
+Código de Prueba FC-28 (SENSOR CAPACITIVO DE HUMEDAD DEL SUELO)
+
+#define SENSOR_SUELO 4
+
+// Valores de calibracion de ejemplo
+int valorSeco = 3500;
+int valorHumedo = 1200;
+
+void setup() {
+  Serial.begin(115200);
+
+  pinMode(SENSOR_SUELO, INPUT);
+
+  Serial.println("================================");
+  Serial.println("    PRUEBA SENSOR FC-28");
+  Serial.println("================================");
+}
+
+void loop() {
+
+  // Leer el valor analogico del sensor
+  int lectura = analogRead(SENSOR_SUELO);
+
+  // Convertir la lectura a porcentaje
+  int humedad = map(
+    lectura,
+    valorSeco,
+    valorHumedo,
+    0,
+    100
+  );
+
+  // Limitar porcentaje entre 0 y 100
+  humedad = constrain(humedad, 0, 100);
+
+  // Mostrar resultados
+  Serial.println("--------------------------");
+
+  Serial.print("Valor analogico: ");
+  Serial.println(lectura);
+
+  Serial.print("Humedad estimada: ");
+  Serial.print(humedad);
+  Serial.println("%");
+
+  delay(1000);
+}

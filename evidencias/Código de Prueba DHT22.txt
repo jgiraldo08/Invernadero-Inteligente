@@ -1,0 +1,49 @@
+Código de Prueba DHT22:
+
+#include <DHT.h>
+
+// Configuracion del sensor
+#define DHTPIN 4
+#define DHTTYPE DHT22
+
+// Crear objeto del sensor
+DHT dht(DHTPIN, DHTTYPE);
+
+void setup() {
+  Serial.begin(115200);
+
+  dht.begin();
+
+  Serial.println("================================");
+  Serial.println("    PRUEBA DEL SENSOR DHT22");
+  Serial.println("================================");
+}
+
+void loop() {
+
+  // Leer humedad relativa del aire
+  float humedad = dht.readHumidity();
+
+  // Leer temperatura en grados Celsius
+  float temperatura = dht.readTemperature();
+
+  // Comprobar si la lectura fue correcta
+  if (isnan(humedad) || isnan(temperatura)) {
+    Serial.println("ERROR: No se puede leer el DHT22");
+  } else {
+    Serial.println("----------------------------");
+
+    Serial.print("Temperatura: ");
+    Serial.print(temperatura);
+    Serial.println(" °C");
+
+    Serial.print("Humedad: ");
+    Serial.print(humedad);
+    Serial.println(" %");
+
+    Serial.println("----------------------------");
+  }
+
+  // Esperar 2 segundos
+  delay(2000);
+}
