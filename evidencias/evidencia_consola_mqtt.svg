@@ -1,0 +1,59 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 850 480" width="100%" height="100%">
+  <defs>
+    <linearGradient id="termBg" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%" stop-color="#090d10"/>
+      <stop offset="100%" stop-color="#0e151b"/>
+    </linearGradient>
+  </defs>
+
+  <style>
+    .t-head { font-family: 'Space Grotesk', system-ui, sans-serif; font-size: 13px; font-weight: 700; fill: #94a3b8; }
+    .t-code { font-family: ui-monospace, SFMono-Regular, Menlo, monospace; font-size: 11.5px; fill: #e2e8f0; line-height: 1.6; }
+    .c-green { fill: #4ade80; }
+    .c-cyan { fill: #38bdf8; }
+    .c-yellow { fill: #facc15; }
+    .c-red { fill: #f87171; }
+    .c-dim { fill: #64748b; }
+    .c-white { fill: #ffffff; }
+  </style>
+
+  <!-- Marco de la Ventana Terminal -->
+  <rect width="850" height="480" rx="14" fill="url(#termBg)" stroke="#23353e" stroke-width="1.5"/>
+
+  <!-- Barra Superior de la Ventana -->
+  <rect width="850" height="38" rx="14" fill="#141e24"/>
+  <rect y="24" width="850" height="14" fill="#141e24"/>
+  <line x1="0" y1="38" x2="850" y2="38" stroke="#23353e" stroke-width="1"/>
+
+  <!-- Botones de la Ventana -->
+  <circle cx="24" cy="19" r="6" fill="#f87171"/>
+  <circle cx="44" cy="19" r="6" fill="#fbbf24"/>
+  <circle cx="64" cy="19" r="6" fill="#4ade80"/>
+  <text x="425" y="24" class="t-head" text-anchor="middle">MONITOR SERIE ESP32 (115200 BAUD) — EVIDENCIA DE TELEMETRÍA</text>
+
+  <!-- Líneas de la Consola -->
+  <g transform="translate(26, 68)" class="t-code">
+    <text y="0"><tspan class="c-dim">[00:00:00.120]</tspan> <tspan class="c-white">=== MINI INVERNADERO INTELIGENTE ESP32 ===</tspan></text>
+    <text y="22"><tspan class="c-dim">[00:00:00.125]</tspan> <tspan class="c-cyan">[TOPIC BASE]</tspan> <tspan class="c-white">lab/invernadero/demo-7f2c9d</tspan></text>
+    <text y="44"><tspan class="c-dim">[00:00:00.130]</tspan> <tspan class="c-green">[HARDWARE]</tspan> <tspan class="c-dim">PIN_SUELO=34 (ADC1), PIN_DHT=21, PIN_RELE=26 (Active LOW)</tspan></text>
+    <text y="66"><tspan class="c-dim">[00:00:01.420]</tspan> <tspan class="c-cyan">[WIFI]</tspan> <tspan class="c-dim">Conectando a C.U.A ...</tspan> <tspan class="c-green">CONECTADO (IP: 192.168.1.145, RSSI: -58 dBm)</tspan></text>
+    <text y="88"><tspan class="c-dim">[00:00:01.890]</tspan> <tspan class="c-cyan">[MQTT]</tspan> <tspan class="c-dim">Conectando a broker.hivemq.com:1883 ...</tspan> <tspan class="c-green">CONEXIÓN EXITOSA</tspan></text>
+    <text y="110"><tspan class="c-dim">[00:00:01.895]</tspan> <tspan class="c-cyan">[MQTT]</tspan> <tspan class="c-dim">Suscrito a tópico de comandos:</tspan> <tspan class="c-yellow">lab/invernadero/demo-7f2c9d/relay/set</tspan></text>
+    
+    <text y="142"><tspan class="c-dim">[00:00:02.500]</tspan> <tspan class="c-green">[SENSORES]</tspan> <tspan class="c-dim">{"temperature":24.5,"air_humidity":68.2,"soil_percent":54,"soil_raw":2258,"relay":"OFF","dht_ok":true,"uptime_s":2}</tspan></text>
+    <text y="164"><tspan class="c-dim">[00:00:05.000]</tspan> <tspan class="c-green">[SENSORES]</tspan> <tspan class="c-dim">{"temperature":24.6,"air_humidity":68.0,"soil_percent":53,"soil_raw":2275,"relay":"OFF","dht_ok":true,"uptime_s":5}</tspan></text>
+    
+    <text y="196"><tspan class="c-dim">[00:00:06.120]</tspan> <tspan class="c-yellow">[MQTT RX]</tspan> <tspan class="c-white">Comando recibido en /relay/set: </tspan><tspan class="c-green" style="font-weight:700;">"ON"</tspan></text>
+    <text y="218"><tspan class="c-dim">[00:00:06.122]</tspan> <tspan class="c-yellow">[RELE]</tspan> <tspan class="c-white">GPIO 26 -> LOW | Bomba ACTIVADA (Tiempo máx: 8.0 s)</tspan></text>
+    <text y="240"><tspan class="c-dim">[00:00:06.130]</tspan> <tspan class="c-cyan">[MQTT TX]</tspan> <tspan class="c-dim">Publicado /relay/state -> </tspan><tspan class="c-green">"ON"</tspan> <tspan class="c-dim">(Dashboard activa microaspersión)</tspan></text>
+    
+    <text y="272"><tspan class="c-dim">[00:00:07.500]</tspan> <tspan class="c-green">[SENSORES]</tspan> <tspan class="c-dim">{"temperature":24.4,"air_humidity":69.5,"soil_percent":58,"soil_raw":2180,"relay":"ON","dht_ok":true,"uptime_s":7}</tspan></text>
+    <text y="294"><tspan class="c-dim">[00:00:10.000]</tspan> <tspan class="c-green">[SENSORES]</tspan> <tspan class="c-dim">{"temperature":24.3,"air_humidity":71.2,"soil_percent":65,"soil_raw":2020,"relay":"ON","dht_ok":true,"uptime_s":10}</tspan></text>
+    
+    <text y="326"><tspan class="c-dim">[00:00:14.122]</tspan> <tspan class="c-red">[SEGURIDAD]</tspan> <tspan class="c-white">Temporizador de software RELE_MAX_ON_MS (8000 ms) CUMPLIDO</tspan></text>
+    <text y="348"><tspan class="c-dim">[00:00:14.124]</tspan> <tspan class="c-yellow">[RELE]</tspan> <tspan class="c-white">GPIO 26 -> HIGH | Bomba DESACTIVADA (Corte forzado)</tspan></text>
+    <text y="370"><tspan class="c-dim">[00:00:14.130]</tspan> <tspan class="c-cyan">[MQTT TX]</tspan> <tspan class="c-dim">Publicado /relay/state -> </tspan><tspan class="c-red">"OFF"</tspan> <tspan class="c-dim">(Dashboard apaga animación)</tspan></text>
+    
+    <text y="396"><tspan class="c-dim">[00:00:15.000]</tspan> <tspan class="c-green">[SENSORES]</tspan> <tspan class="c-dim">{"temperature":24.2,"air_humidity":72.0,"soil_percent":70,"soil_raw":1910,"relay":"OFF","dht_ok":true,"uptime_s":15}</tspan></text>
+  </g>
+</svg>
