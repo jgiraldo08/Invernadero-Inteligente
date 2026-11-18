@@ -5,7 +5,7 @@ Dashboard profesional y sistema de telemetría en tiempo real para mini invernad
 
 # Integrantes:
 - Juan Esteban Giraldo Suárez
-- Wainer Ascencio Torres
+- Wainer Alberto Ascencio Torres
 - Jhonn Andrés Colina Ricardo
 - Braynner David Rodríguez Obredor
 - Samuel David Rodríguez Sánchez
