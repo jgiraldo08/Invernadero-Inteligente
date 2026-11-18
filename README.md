@@ -3,6 +3,15 @@
 
 Dashboard profesional y sistema de telemetría en tiempo real para mini invernadero basado en **ESP32**, **HiveMQ MQTT** y visualización web biomecánica desacoplada en **HTML5**, **CSS3** y **JavaScript (Vanilla)**.
 
+# Integrantes:
+- Juan Esteban Giraldo Suárez
+- Wainer Ascencio Torres
+- Jhonn Andrés Colina Ricardo
+- Braynner David Rodríguez Obredor
+- Samuel David Rodríguez Sánchez
+- Aldimar Andrés Saltarín Arteta
+- Jorge Isaac Santiago Gutiérrez
+
 ---
 
 ## 📁 Estructura del Proyecto
