@@ -1,0 +1,510 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="color-scheme" content="dark" />
+  <meta name="description" content="Dashboard IoT profesional para mini invernadero ESP32 con HiveMQ MQTT y animación biomecánica en tiempo real." />
+  <title>VERDE / LAB — Mini Invernadero Inteligente IoT</title>
+
+  <!-- Google Fonts: DM Sans & Space Grotesk -->
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,400;0,9..40,500;0,9..40,600;0,9..40,700;1,9..40,400&family=Space+Grotesk:wght@400;500;600;700&display=swap" rel="stylesheet" />
+
+  <!-- Hojas de estilo desacopladas -->
+  <link rel="stylesheet" href="css/style.css" />
+  <link rel="stylesheet" href="css/animation.css" />
+</head>
+<body>
+  <div class="app-container" id="appRoot">
+    <!-- BARRA LATERAL (SIDEBAR DE NAVEGACIÓN Y HARDWARE) -->
+    <aside class="sidebar">
+      <div class="university-brand" title="Corporación Universitaria Americana">
+        <img src="assets/logo-americana.png" alt="Corporación Universitaria Americana" class="university-logo" />
+      </div>
+
+      <a href="#inicio" class="brand" aria-label="Ir al inicio de VERDE.LAB">
+        <div class="brand-icon">
+          <svg viewBox="0 0 32 32" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M16 27V13m0 6c-8 0-10-5-10-10 7 0 10 4 10 10Zm0-6c0-6 3-9 10-9 0 6-3 9-10 9Z"/>
+            <path d="M8 28h16"/>
+          </svg>
+        </div>
+        <div class="brand-info">
+          <h1>VERDE<span>.</span>LAB</h1>
+          <small>Grow Intelligence IoT</small>
+        </div>
+      </a>
+
+      <div class="sidebar-nav-group">
+        <span class="sidebar-heading">Monitoreo</span>
+        <nav class="nav-menu" aria-label="Navegación principal">
+          <a class="nav-item active" href="#inicio">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><rect x="3" y="3" width="8" height="8" rx="2"/><rect x="13" y="3" width="8" height="8" rx="2"/><rect x="3" y="13" width="8" height="8" rx="2"/><rect x="13" y="13" width="8" height="8" rx="2"/></svg>
+            Panel General
+          </a>
+          <a class="nav-item" href="#sensores">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M5 20V9m7 11V4m7 16v-7" stroke-width="2" stroke-linecap="round"/></svg>
+            Sensores
+          </a>
+          <a class="nav-item" href="#historial">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="m3 15 6-6 4 4 8-8M3 21h18" stroke-width="2" stroke-linecap="round"/></svg>
+            Tendencias
+          </a>
+          <a class="nav-item" href="#conexion">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><circle cx="12" cy="12" r="3"/><path d="M19 5 5 19M4 9c5-7 11-7 16 0M1 5c7-9 15-9 22 0" stroke-width="1.5"/></svg>
+            Conexión MQTT
+          </a>
+        </nav>
+      </div>
+
+      <div class="sidebar-spacer"></div>
+
+      <!-- Tarjeta de estado de telemetría del ESP32 -->
+      <div class="device-status-card" aria-live="polite">
+        <span class="device-status-label">Telemetría de campo</span>
+        <div class="device-status-indicator">
+          <span class="status-dot" id="deviceDot"></span>
+          <span id="deviceLabel">Sin telemetría</span>
+        </div>
+      </div>
+
+      <div class="sidebar-footer">
+        <strong>Corporación Universitaria Americana</strong><br/>
+        ESP32 · FC-28 · DHT22 · GPIO 26<br/>
+        Estación Agro-Biológica v2.0
+      </div>
+    </aside>
+
+    <!-- ÁREA PRINCIPAL DEL DASHBOARD -->
+    <main class="main-content" id="inicio">
+      <!-- TOPBAR SUPERIOR -->
+      <header class="topbar">
+        <div>
+          <span class="eyebrow">
+            <svg width="12" height="12" viewBox="0 0 24 24" fill="currentColor"><circle cx="12" cy="12" r="10"/></svg>
+            Corporación Universitaria Americana · Telemetría IoT
+          </span>
+          <h2 class="page-title">Tu invernadero, <span>en vivo.</span></h2>
+          <p class="page-subtitle">Supervisión bio-climática y control de microaspersión en tiempo real.</p>
+        </div>
+
+        <div class="topbar-badges">
+          <div class="pill-badge">
+            <span class="status-dot" id="brokerDot"></span>
+            <span id="brokerLabel">Broker desconectado</span>
+          </div>
+          <div class="pill-badge pill-clock" id="clock">--:--:--</div>
+        </div>
+      </header>
+
+      <!-- HERO STAGE: LA ANIMACIÓN DE LA PLANTICA ES LA PROTAGONISTA -->
+      <div class="hero-stage-grid">
+        <!-- VISTA DEL DOMO / TERRARIO BIOLÓGICO CON LA PLANTICA PROTAGONISTA -->
+        <section class="hero-terrarium-card" aria-labelledby="sceneTitle">
+          <div class="terrarium-header">
+            <div class="terrarium-title-group">
+              <span class="eyebrow">BIO-CÁMARA · PLANTA CENTRAL</span>
+              <h3 id="sceneTitle">Cámara de Crecimiento Controlado</h3>
+            </div>
+            <span class="hud-tag" id="sceneTag">ESPERANDO DATOS</span>
+          </div>
+
+          <!-- Escenario Gráfico SVG Vectorial Centrado en una Sola Planta -->
+          <div class="terrarium-viewport">
+            <svg class="terrarium-svg" viewBox="0 0 700 450" role="img" aria-label="Animación viva e interactiva de una planta en invernadero con sistema de riego automatizado">
+              <defs>
+                <!-- Gradientes y Filtros de Iluminación y Suelo -->
+                <linearGradient id="glassGrad" x1="0" y1="0" x2="1" y2="1">
+                  <stop offset="0%" stop-color="#34d399" stop-opacity="0.18"/>
+                  <stop offset="50%" stop-color="#14b8a6" stop-opacity="0.06"/>
+                  <stop offset="100%" stop-color="#0f172a" stop-opacity="0.25"/>
+                </linearGradient>
+
+                <linearGradient id="soilGrad" x1="0" y1="0" x2="0" y2="1">
+                  <stop offset="0%" stop-color="#6b4f3b"/>
+                  <stop offset="45%" stop-color="#4a3729"/>
+                  <stop offset="100%" stop-color="#241a13"/>
+                </linearGradient>
+
+                <linearGradient id="subsoilGrad" x1="0" y1="0" x2="0" y2="1">
+                  <stop offset="0%" stop-color="#374151"/>
+                  <stop offset="100%" stop-color="#1f2937"/>
+                </linearGradient>
+
+                <!-- Gradiente de Clorofila en Hojas -->
+                <linearGradient id="leafGradMain" x1="0" y1="0" x2="1" y2="1">
+                  <stop offset="0%" stop-color="#86efac"/>
+                  <stop offset="40%" stop-color="#22c55e"/>
+                  <stop offset="100%" stop-color="#14532d"/>
+                </linearGradient>
+
+                <linearGradient id="leafGradBack" x1="0" y1="0" x2="1" y2="1">
+                  <stop offset="0%" stop-color="#4ade80"/>
+                  <stop offset="60%" stop-color="#15803d"/>
+                  <stop offset="100%" stop-color="#052e16"/>
+                </linearGradient>
+
+                <!-- Gradiente del Tallo Principal -->
+                <linearGradient id="stemGrad" x1="0" y1="0" x2="1" y2="0">
+                  <stop offset="0%" stop-color="#86efac"/>
+                  <stop offset="50%" stop-color="#22c55e"/>
+                  <stop offset="100%" stop-color="#166534"/>
+                </linearGradient>
+
+                <!-- Resplandor Solar / Lámpara Espectral -->
+                <radialGradient id="sunGlow">
+                  <stop offset="0%" stop-color="#fef08a" stop-opacity="0.85"/>
+                  <stop offset="45%" stop-color="#fde047" stop-opacity="0.3"/>
+                  <stop offset="100%" stop-color="#eab308" stop-opacity="0"/>
+                </radialGradient>
+
+                <!-- Cono de Microaspersión -->
+                <linearGradient id="sprayMistGrad" x1="0" y1="0" x2="0" y2="1">
+                  <stop offset="0%" stop-color="#38bdf8" stop-opacity="0.8"/>
+                  <stop offset="70%" stop-color="#67e8f9" stop-opacity="0.3"/>
+                  <stop offset="100%" stop-color="#a5f3fc" stop-opacity="0.02"/>
+                </linearGradient>
+              </defs>
+
+              <!-- Sombra de la Base -->
+              <ellipse cx="350" cy="410" rx="270" ry="20" fill="#000" opacity="0.45"/>
+
+              <!-- Atmósfera Solar / Grow Light -->
+              <circle class="sun-corona" cx="510" cy="75" r="85" fill="url(#sunGlow)"/>
+              <circle class="sun-core" cx="510" cy="75" r="22"/>
+
+              <!-- Partículas Bioluminiscentes en Suspensión -->
+              <g fill="#86efac" opacity="0.6">
+                <circle class="bio-particle" cx="180" cy="180" r="2.2"/>
+                <circle class="bio-particle" cx="240" cy="110" r="1.8"/>
+                <circle class="bio-particle" cx="490" cy="220" r="2.5"/>
+                <circle class="bio-particle" cx="440" cy="130" r="1.6"/>
+                <circle class="bio-particle" cx="300" cy="80" r="2"/>
+              </g>
+
+              <!-- Estructura del Invernadero / Cúpula Biomimética -->
+              <path d="M120 170 L250 50 H450 L580 170 V380 H120 Z" fill="url(#glassGrad)" stroke="#34d399" stroke-width="4.5" stroke-linejoin="round" opacity="0.85"/>
+              
+              <!-- Costillas y Perfilería de Vidrio -->
+              <path d="M120 170 H580 M250 50 L310 170 M450 50 L390 170 M310 170 V380 M390 170 V380 M200 100 V380 M500 100 V380 M120 270 H580" 
+                    fill="none" stroke="#2dd4bf" stroke-width="2.5" opacity="0.55"/>
+              <path d="M120 170 L250 50 H450 L580 170" fill="none" stroke="#a7f3d0" stroke-width="5" stroke-linecap="round" stroke-linejoin="round" opacity="0.7"/>
+
+              <!-- Reflejos Angulares de Cristal -->
+              <path d="M140 180 L200 130 V230 L140 270 Z" fill="#d1fae5" opacity="0.08" class="glass-twinkle"/>
+              <path d="M480 80 L520 60 L560 160 L520 160 Z" fill="#d1fae5" opacity="0.06" class="glass-twinkle-delayed"/>
+
+              <!-- Barra Superior de Iluminación y Tubería de Riego -->
+              <rect x="220" y="105" width="260" height="9" rx="4.5" fill="#1e3a2f" stroke="#065f46" stroke-width="1.5"/>
+              <rect x="250" y="102" width="200" height="4" rx="2" fill="#86efac" opacity="0.8"/>
+
+              <!-- Boquilla Central de Riego dirigida a la Plantica -->
+              <path d="M344 114 V132 H356 V114 Z" fill="#134e4a" stroke="#2dd4bf" stroke-width="1.5"/>
+              <ellipse class="sprinkler-nozzle" cx="350" cy="132" rx="7" ry="3.5" fill="#38bdf8"/>
+
+              <!-- SISTEMA DE RIEGO ACTIVO (ANIMACIÓN DE AGUA Y NEBULIZACIÓN) -->
+              <g class="irrigation-system">
+                <!-- Cono de Niebla -->
+                <path class="spray-mist" d="M350 133 L250 330 H450 Z" fill="url(#sprayMistGrad)"/>
+
+                <!-- Gotas de Agua en Cascada hacia la Plantica -->
+                <g fill="#38bdf8">
+                  <ellipse class="drop drop-1" cx="350" cy="145" rx="3.5" ry="7"/>
+                  <ellipse class="drop drop-2" cx="338" cy="160" rx="3" ry="6.5"/>
+                  <ellipse class="drop drop-3" cx="362" cy="155" rx="3.2" ry="7"/>
+                  <ellipse class="drop drop-4" cx="328" cy="175" rx="2.8" ry="6"/>
+                  <ellipse class="drop drop-5" cx="372" cy="180" rx="3" ry="6.5"/>
+                  <ellipse class="drop drop-6" cx="346" cy="195" rx="3" ry="7"/>
+                  <ellipse class="drop drop-7" cx="358" cy="210" rx="2.8" ry="6.5"/>
+                  <ellipse class="drop drop-8" cx="332" cy="225" rx="3" ry="6"/>
+                  <ellipse class="drop drop-9" cx="368" cy="235" rx="3.2" ry="7"/>
+                  <ellipse class="drop drop-10" cx="350" cy="250" rx="3.5" ry="7.5"/>
+                </g>
+
+                <!-- Ondas de Humectación en la Tierra -->
+                <ellipse class="splash-ring" cx="350" cy="340" rx="12" ry="4" fill="none" stroke="#38bdf8" stroke-width="2"/>
+                <ellipse class="splash-ring splash-ring-2" cx="350" cy="340" rx="18" ry="6" fill="none" stroke="#67e8f9" stroke-width="1.5"/>
+              </g>
+
+              <!-- Maceta / Cama de Cultivo Centralizada -->
+              <path d="M190 330 H510 L480 395 H220 Z" fill="url(#soilGrad)" stroke="#4b3323" stroke-width="3" stroke-linejoin="round"/>
+              <path d="M205 340 H495" stroke="#92400e" stroke-width="3.5" opacity="0.6"/>
+              
+              <!-- Resplandor de Humedad en el Sustrato -->
+              <ellipse class="soil-moisture-glow" cx="350" cy="336" rx="145" ry="12" fill="#38bdf8"/>
+
+              <!-- Borde Estructural de la Maceta -->
+              <path d="M210 395 H490 L470 415 H230 Z" fill="url(#subsoilGrad)" stroke="#111827" stroke-width="2.5"/>
+              <rect x="175" y="325" width="350" height="14" rx="7" fill="#1e293b" stroke="#334155" stroke-width="2"/>
+              <path d="M185 332 H515" stroke="#64748b" opacity="0.5" stroke-width="2"/>
+
+              <!-- ======================================================= -->
+              <!-- LA PLANTICA PROTAGONISTA (Única, Detallada y Viva)     -->
+              <!-- ======================================================= -->
+              <g class="single-plant" id="heroPlant">
+                <!-- Anclaje de Raíz en la Tierra -->
+                <path d="M342 334 Q346 325 350 320 Q354 325 358 334" stroke="#166534" stroke-width="6" fill="none" stroke-linecap="round"/>
+
+                <!-- Tallo Principal Conducente de Nutrientes -->
+                <path d="M350 330 Q344 265 354 200 Q358 160 350 128" fill="none" stroke="url(#stemGrad)" stroke-width="7.5" stroke-linecap="round"/>
+
+                <!-- HOJA 1: Nivel Inferior Izquierdo (Hoja Madura y Extensa) -->
+                <g class="leaf-left">
+                  <path d="M348 295 Q265 292 230 252 Q285 238 348 275 Z" fill="url(#leafGradBack)" stroke="#4ade80" stroke-width="1.8"/>
+                  <path d="M348 285 Q290 274 240 255" fill="none" stroke="#86efac" stroke-width="1.8" stroke-linecap="round" opacity="0.8"/>
+                </g>
+
+                <!-- HOJA 2: Nivel Inferior Derecho (Hoja Madura y Robusta) -->
+                <g class="leaf-right">
+                  <path d="M352 280 Q435 272 470 230 Q415 220 352 260 Z" fill="url(#leafGradMain)" stroke="#86efac" stroke-width="2"/>
+                  <path d="M352 270 Q410 255 460 233" fill="none" stroke="#dcfce7" stroke-width="1.8" stroke-linecap="round" opacity="0.85"/>
+                </g>
+
+                <!-- HOJA 3: Nivel Medio Izquierdo (Fotosíntesis Activa) -->
+                <g class="leaf-left-2">
+                  <path d="M349 235 Q275 220 255 178 Q305 170 350 215 Z" fill="url(#leafGradMain)" stroke="#86efac" stroke-width="1.8"/>
+                  <path d="M349 225 Q300 205 265 182" fill="none" stroke="#dcfce7" stroke-width="1.5" stroke-linecap="round" opacity="0.85"/>
+                </g>
+
+                <!-- HOJA 4: Nivel Medio Derecho (Fotosíntesis Activa) -->
+                <g class="leaf-right-2">
+                  <path d="M353 205 Q420 188 445 148 Q398 142 352 188 Z" fill="url(#leafGradBack)" stroke="#4ade80" stroke-width="1.8"/>
+                  <path d="M353 196 Q400 174 435 152" fill="none" stroke="#86efac" stroke-width="1.5" stroke-linecap="round" opacity="0.8"/>
+                </g>
+
+                <!-- HOJA 5: Nivel Superior Izquierdo (Tierno Crecimiento) -->
+                <g class="leaf-left">
+                  <path d="M350 170 Q305 150 292 120 Q328 118 351 154 Z" fill="url(#leafGradMain)" stroke="#86efac" stroke-width="1.6"/>
+                </g>
+
+                <!-- HOJA 6: Nivel Superior Derecho (Tierno Crecimiento) -->
+                <g class="leaf-right">
+                  <path d="M351 155 Q390 135 405 108 Q375 106 351 140 Z" fill="url(#leafGradMain)" stroke="#86efac" stroke-width="1.6"/>
+                </g>
+
+                <!-- CORONA / BROTE APICAL (Nuevas Hojas Buscando la Luz) -->
+                <g class="leaf-apex">
+                  <path d="M350 130 Q338 105 348 88 Q358 105 350 130 Z" fill="#bbf7d0" stroke="#86efac" stroke-width="1.5"/>
+                  <path d="M350 128 Q362 108 355 92 Q347 108 350 128 Z" fill="#86efac" opacity="0.8"/>
+                </g>
+
+                <!-- Rocío Bioluminiscente en las Hojas -->
+                <circle cx="260" cy="256" r="2.2" fill="#dcfce7" opacity="0.85"/>
+                <circle cx="440" cy="235" r="2.5" fill="#dcfce7" opacity="0.9"/>
+                <circle cx="280" cy="184" r="2" fill="#dcfce7" opacity="0.85"/>
+              </g>
+            </svg>
+          </div>
+
+          <!-- Barra Inferior del Terrario -->
+          <div class="terrarium-footer">
+            <div class="terrarium-status-text">
+              <strong id="sceneSummary">Esperando lecturas de sensores</strong>
+              <span id="sceneDescription">Conecta el dashboard al broker MQTT o inicia la simulación.</span>
+            </div>
+            <div class="irrigation-pill" id="sceneWater">RIEGO EN ESPERA</div>
+          </div>
+        </section>
+
+        <!-- PANEL DE CONTROL DEL RELÉ Y ACTUADOR -->
+        <section class="control-panel-card" id="control" aria-labelledby="controlTitle">
+          <div class="control-panel-header">
+            <div>
+              <span class="eyebrow">ACTUADOR · SALIDA GPIO 26</span>
+              <h3 id="controlTitle">Control de Riego</h3>
+            </div>
+            <span class="mode-badge">ESP32 AUTOMÁTICO</span>
+          </div>
+
+          <div class="actuator-card">
+            <div class="actuator-icon-wrapper">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M12 2v10M6.5 5.5a9 9 0 1 0 11 0"/>
+              </svg>
+            </div>
+            <div class="actuator-details">
+              <h4 id="relayState">Sin datos</h4>
+              <p id="relayDescription">Esperando comunicación con el broker MQTT.</p>
+            </div>
+          </div>
+
+          <div class="button-group-2">
+            <button class="btn btn-primary" id="relayOnBtn" type="button" disabled>
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><path d="M12 2v10M6.5 5.5a9 9 0 1 0 11 0"/></svg>
+              Regar (8 s máx)
+            </button>
+            <button class="btn btn-secondary" id="relayOffBtn" type="button" disabled>
+              Apagar bomba
+            </button>
+          </div>
+
+          <div class="safety-notice">
+            <strong>Protección de Laboratorio:</strong> El broker HiveMQ es público. El firmware en el ESP32 desactiva el relé automáticamente a los <strong>8 segundos</strong> como medida de seguridad por software.
+          </div>
+
+          <div class="control-stats-grid">
+            <div class="control-stat-item">
+              <small>Pin de Salida</small>
+              <strong>GPIO 26</strong>
+            </div>
+            <div class="control-stat-item">
+              <small>Último Comando</small>
+              <strong id="lastCommand">Ninguno</strong>
+            </div>
+          </div>
+        </section>
+      </div>
+
+      <!-- MÉTRICAS DE TELEMETRÍA EN TIEMPO REAL -->
+      <section class="metric-cards-grid" id="sensores" aria-label="Lecturas de telemetría de sensores">
+        <!-- Tarjeta Temperatura -->
+        <article class="metric-card">
+          <div class="metric-card-top">
+            <span class="metric-card-title">Temperatura Ambiente</span>
+            <div class="metric-icon-badge temp">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round">
+                <path d="M14 14.6V5a3 3 0 0 0-6 0v9.6a5 5 0 1 0 6 0Z"/><path d="M11 10v8"/>
+              </svg>
+            </div>
+          </div>
+          <div class="metric-value-display" id="tempValue">--<span>°C</span></div>
+          <div class="metric-card-foot" id="tempFoot">Esperando al sensor DHT22</div>
+        </article>
+
+        <!-- Tarjeta Humedad del Aire -->
+        <article class="metric-card">
+          <div class="metric-card-top">
+            <span class="metric-card-title">Humedad del Aire</span>
+            <div class="metric-icon-badge air">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round">
+                <path d="M12 3c-5 7-8 10-8 13a8 8 0 0 0 16 0c0-3-3-6-8-13Z"/><path d="M9 17a4 4 0 0 0 4 3"/>
+              </svg>
+            </div>
+          </div>
+          <div class="metric-value-display" id="airValue">--<span>% HR</span></div>
+          <div class="metric-card-foot">Sensor DHT22 · Humedad relativa</div>
+          <div class="gauge-track">
+            <div class="gauge-fill cyan" id="airBar" style="width: 0%"></div>
+          </div>
+        </article>
+
+        <!-- Tarjeta Humedad del Suelo -->
+        <article class="metric-card">
+          <div class="metric-card-top">
+            <span class="metric-card-title">Humedad del Sustrato</span>
+            <div class="metric-icon-badge">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round">
+                <path d="M12 21V9m0 6C6 15 4 10 4 6c6 0 8 3 8 9Zm0-6c0-5 2-7 8-7 0 5-2 7-8 7Z"/>
+              </svg>
+            </div>
+          </div>
+          <div class="metric-value-display" id="soilValue">--<span>%</span></div>
+          <div class="metric-card-foot" id="soilFoot">Sonda FC-28 · Calibración ADC</div>
+          <div class="gauge-track">
+            <div class="gauge-fill" id="soilBar" style="width: 0%"></div>
+          </div>
+        </article>
+      </section>
+
+      <!-- HISTORIAL GRÁFICO Y CONFIGURACIÓN MQTT -->
+      <div class="bottom-analytics-grid">
+        <!-- Gráfico en tiempo real -->
+        <section class="chart-card" id="historial" aria-labelledby="chartTitle">
+          <div class="section-header">
+            <div>
+              <span class="eyebrow">ANÁLISIS TEMPORAL</span>
+              <h3 id="chartTitle">Tendencias de la Plantica</h3>
+              <p>Buffer local de las últimas 50 muestras recibidas.</p>
+            </div>
+            <div class="chart-tabs-group" role="group" aria-label="Variables del gráfico">
+              <button class="chart-tab-btn active" data-chart="soil" type="button">Suelo</button>
+              <button class="chart-tab-btn" data-chart="temp" type="button">Temp.</button>
+              <button class="chart-tab-btn" data-chart="air" type="button">Aire</button>
+            </div>
+          </div>
+
+          <div class="canvas-wrapper">
+            <canvas id="chart" role="img" aria-label="Gráfico de líneas continuas en tiempo real"></canvas>
+          </div>
+
+          <div class="chart-meta-row">
+            <span id="chartLegend">Humedad del suelo (%)</span>
+            <span>VENTANA · 50 MUESTRAS</span>
+          </div>
+
+          <!-- Historial de eventos del sistema -->
+          <div class="activity-log-section">
+            <div class="activity-log-title">Registro de Eventos</div>
+            <div class="event-items-list" id="eventList" aria-live="polite">
+              <div class="event-entry">
+                <i></i>
+                <span>Dashboard preparado para enlazar con broker MQTT</span>
+                <time>--:--</time>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <!-- Configuración de red y broker -->
+        <section class="settings-card" id="conexion" aria-labelledby="settingsTitle">
+          <div class="section-header">
+            <div>
+              <span class="eyebrow">CONECTIVIDAD MQTT</span>
+              <h3 id="settingsTitle">Parámetros de Red</h3>
+              <p>Mismo topic base utilizado en el sketch <code>.ino</code> del ESP32.</p>
+            </div>
+          </div>
+
+          <form id="connectForm" autocomplete="off">
+            <div class="form-field-group">
+              <label class="field-label" for="mqttUrl">Servidor WebSocket (WSS)</label>
+              <input class="text-input" type="text" id="mqttUrl" spellcheck="false" value="wss://broker.hivemq.com:8884/mqtt" required />
+              <div class="field-help-text">El navegador utiliza WSS puerto :8884. El ESP32 usa TCP :1883.</div>
+            </div>
+
+            <div class="form-field-group">
+              <label class="field-label" for="topicBase">Prefijo de Topics MQTT</label>
+              <input class="text-input" type="text" id="topicBase" spellcheck="false" value="lab/invernadero/demo-7f2c9d" required />
+              <div class="field-help-text">Debe coincidir con la constante <code>TOPIC_BASE</code> de tu Arduino IDE.</div>
+            </div>
+
+            <button class="btn btn-primary btn-full" type="submit" id="connectBtn">
+              Conectar al broker
+            </button>
+          </form>
+
+          <div class="button-group-2" style="margin-top: 14px;">
+            <button class="btn btn-outline" id="demoBtn" type="button">Iniciar simulación</button>
+            <button class="btn btn-secondary" id="resetBtn" type="button">Limpiar datos</button>
+          </div>
+
+          <div class="session-status-banner">
+            <span>Estado de sesión</span>
+            <strong id="connectionStatus">Desconectado</strong>
+          </div>
+
+          <div class="field-help-text" style="margin-top: 14px;">
+            <strong>Modo Simulación:</strong> Genera oscilaciones matemáticas para comprobar animaciones, riego y gráficas sin requerir hardware físico.
+          </div>
+        </section>
+      </div>
+
+      <!-- FOOTER -->
+      <footer class="dashboard-footer">
+        <div class="footer-brand">
+          <img src="assets/logo-americana.png" alt="Corporación Universitaria Americana" class="footer-logo" />
+          <span>Corporación Universitaria Americana · VERDE.LAB ESP32 + HiveMQ</span>
+        </div>
+        <span class="footer-timestamp" id="footerLast">Última lectura: pendiente</span>
+      </footer>
+    </main>
+  </div>
+
+  <!-- Dependencia externa: MQTT.js vía CDN -->
+  <script src="https://unpkg.com/mqtt@5.10.4/dist/mqtt.min.js"></script>
+  <!-- Lógica desacoplada de la aplicación -->
+  <script src="js/app.js"></script>
+</body>
+</html>

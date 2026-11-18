@@ -1,0 +1,351 @@
+/* ==========================================================================
+   VERDE.LAB — Mini Invernadero IoT
+   Hoja de estilos de Animaciones (Plantica protagonista, Riego y Ambiente)
+   ========================================================================== */
+
+/* --- 1. La Plantica Protagonista: Movimiento Orgánico & Balanceo --- */
+
+/* Contenedor de la planta individual anclada a la tierra */
+.single-plant {
+  transform-box: fill-box;
+  transform-origin: 350px 320px;
+  animation: plantSway 6.5s ease-in-out infinite alternate;
+}
+
+@keyframes plantSway {
+  0% {
+    transform: rotate(-1.8deg) skewX(-0.5deg);
+  }
+  50% {
+    transform: rotate(0.6deg) skewX(0.2deg);
+  }
+  100% {
+    transform: rotate(2deg) skewX(0.7deg);
+  }
+}
+
+/* Reacción de la planta al recibir riego: se revitaliza y esponja sutilmente */
+.relay-on .single-plant {
+  animation: plantSway 5s ease-in-out infinite alternate,
+             plantThrive 3s ease-in-out infinite alternate;
+}
+
+@keyframes plantThrive {
+  0% {
+    filter: drop-shadow(0 0 0 rgba(74, 222, 128, 0));
+  }
+  100% {
+    filter: drop-shadow(0 0 12px rgba(74, 222, 128, 0.35));
+  }
+}
+
+/* Hojas izquierdas: movimiento elástico independiente */
+.leaf-left {
+  transform-box: fill-box;
+  transform-origin: right bottom;
+  animation: leafFlutterLeft 4.8s ease-in-out infinite alternate;
+}
+
+.leaf-left-2 {
+  transform-box: fill-box;
+  transform-origin: right bottom;
+  animation: leafFlutterLeft 5.6s ease-in-out infinite alternate;
+  animation-delay: -1.2s;
+}
+
+@keyframes leafFlutterLeft {
+  0% {
+    transform: rotate(0deg) scale(1);
+  }
+  50% {
+    transform: rotate(-2.2deg) scale(1.015);
+  }
+  100% {
+    transform: rotate(1.4deg) scale(0.99);
+  }
+}
+
+/* Hojas derechas: movimiento opuesto para dar dinamismo */
+.leaf-right {
+  transform-box: fill-box;
+  transform-origin: left bottom;
+  animation: leafFlutterRight 5.2s ease-in-out infinite alternate;
+  animation-delay: -0.8s;
+}
+
+.leaf-right-2 {
+  transform-box: fill-box;
+  transform-origin: left bottom;
+  animation: leafFlutterRight 6.1s ease-in-out infinite alternate;
+  animation-delay: -2s;
+}
+
+@keyframes leafFlutterRight {
+  0% {
+    transform: rotate(0deg) scale(1);
+  }
+  50% {
+    transform: rotate(2.4deg) scale(1.02);
+  }
+  100% {
+    transform: rotate(-1.2deg) scale(0.985);
+  }
+}
+
+/* Brote superior / Corona: oscilación suave al compás de la brisa */
+.leaf-apex {
+  transform-box: fill-box;
+  transform-origin: center bottom;
+  animation: apexBreeze 3.8s ease-in-out infinite alternate;
+  animation-delay: -0.5s;
+}
+
+@keyframes apexBreeze {
+  0% {
+    transform: rotate(-2.5deg) scaleY(1);
+  }
+  100% {
+    transform: rotate(2.8deg) scaleY(1.02);
+  }
+}
+
+/* --- 2. Sistema de Riego & Aspersor Animado (Relé ON) --- */
+
+/* El grupo de gotas está invisible por defecto */
+.irrigation-system {
+  opacity: 0;
+  transition: opacity 0.4s ease-in-out;
+  pointer-events: none;
+}
+
+/* Cuando el relé se activa, se despliega la lluvia y el aspersor */
+.relay-on .irrigation-system {
+  opacity: 1;
+}
+
+/* Boquilla de microaspersión */
+.sprinkler-nozzle {
+  transition: filter 0.3s ease;
+}
+
+.relay-on .sprinkler-nozzle {
+  filter: drop-shadow(0 0 10px rgba(56, 189, 248, 0.8));
+}
+
+/* Cono de micro-nebulización / rocío fino */
+.spray-mist {
+  opacity: 0;
+  transform-origin: 350px 115px;
+  transition: opacity 0.4s ease;
+}
+
+.relay-on .spray-mist {
+  animation: mistPulse 1.2s ease-in-out infinite alternate;
+}
+
+@keyframes mistPulse {
+  0% {
+    opacity: 0.25;
+    transform: scale(0.96);
+  }
+  100% {
+    opacity: 0.65;
+    transform: scale(1.04);
+  }
+}
+
+/* Gotas individuales de agua con trayectoria descendente y física fluida */
+.drop {
+  opacity: 0;
+  transform-origin: center;
+}
+
+.relay-on .drop {
+  animation: dropFall 0.95s linear infinite;
+}
+
+.relay-on .drop-1 { animation-delay: 0s; }
+.relay-on .drop-2 { animation-delay: 0.18s; }
+.relay-on .drop-3 { animation-delay: 0.36s; }
+.relay-on .drop-4 { animation-delay: 0.54s; }
+.relay-on .drop-5 { animation-delay: 0.72s; }
+.relay-on .drop-6 { animation-delay: 0.12s; }
+.relay-on .drop-7 { animation-delay: 0.28s; }
+.relay-on .drop-8 { animation-delay: 0.48s; }
+.relay-on .drop-9 { animation-delay: 0.64s; }
+.relay-on .drop-10 { animation-delay: 0.82s; }
+
+@keyframes dropFall {
+  0% {
+    transform: translateY(-8px) scale(0.6);
+    opacity: 0;
+  }
+  20% {
+    opacity: 0.95;
+    transform: translateY(20px) scale(1);
+  }
+  85% {
+    opacity: 0.95;
+    transform: translateY(140px) scale(1);
+  }
+  100% {
+    transform: translateY(165px) scale(0.4);
+    opacity: 0;
+  }
+}
+
+/* Ondas de choque de humedad / salpicadura en la tierra */
+.splash-ring {
+  opacity: 0;
+  transform-origin: center;
+}
+
+.relay-on .splash-ring {
+  animation: splashExpand 1.2s ease-out infinite;
+}
+
+.relay-on .splash-ring-2 {
+  animation-delay: 0.6s;
+}
+
+@keyframes splashExpand {
+  0% {
+    r: 4;
+    opacity: 0.8;
+    stroke-width: 2.5;
+  }
+  100% {
+    r: 28;
+    opacity: 0;
+    stroke-width: 0.5;
+  }
+}
+
+/* Resplandor de hidratación en la tierra cultivada */
+.soil-moisture-glow {
+  opacity: 0.2;
+  transition: opacity 0.8s ease;
+}
+
+.relay-on .soil-moisture-glow {
+  opacity: 0.8;
+  animation: soilMoistPulse 2s ease-in-out infinite alternate;
+}
+
+@keyframes soilMoistPulse {
+  0% { opacity: 0.65; }
+  100% { opacity: 0.95; }
+}
+
+/* --- 3. Iluminación & Ciclo Solar en el Domo --- */
+.sun-corona {
+  transform-origin: 510px 75px;
+  animation: sunRadiance 6s ease-in-out infinite alternate;
+}
+
+@keyframes sunRadiance {
+  0% {
+    opacity: 0.45;
+    transform: scale(0.95);
+  }
+  100% {
+    opacity: 0.85;
+    transform: scale(1.08);
+  }
+}
+
+.sun-core {
+  animation: sunCorePulse 4s ease-in-out infinite alternate;
+}
+
+@keyframes sunCorePulse {
+  0% {
+    fill: #fef08a;
+    filter: drop-shadow(0 0 6px #facc15);
+  }
+  100% {
+    fill: #fffbeb;
+    filter: drop-shadow(0 0 16px #fef08a);
+  }
+}
+
+/* --- 4. Micro-partículas Atmosféricas (Esporas / Polvo Bioluminiscente) --- */
+.bio-particle {
+  animation: particleFloat 4.5s ease-in-out infinite alternate;
+}
+
+.bio-particle:nth-child(2) {
+  animation-duration: 6s;
+  animation-delay: -1.5s;
+}
+
+.bio-particle:nth-child(3) {
+  animation-duration: 5.2s;
+  animation-delay: -3s;
+}
+
+.bio-particle:nth-child(4) {
+  animation-duration: 7s;
+  animation-delay: -2.2s;
+}
+
+@keyframes particleFloat {
+  0% {
+    transform: translateY(0) translateX(0);
+    opacity: 0.25;
+  }
+  50% {
+    opacity: 0.85;
+  }
+  100% {
+    transform: translateY(-22px) translateX(12px);
+    opacity: 0.15;
+  }
+}
+
+/* Destellos en los cristales del invernadero */
+.glass-twinkle {
+  animation: glassTwinkle 3.5s ease-in-out infinite alternate;
+}
+
+.glass-twinkle-delayed {
+  animation: glassTwinkle 4.2s ease-in-out infinite alternate;
+  animation-delay: -1.8s;
+}
+
+@keyframes glassTwinkle {
+  0% {
+    opacity: 0.15;
+  }
+  100% {
+    opacity: 0.65;
+  }
+}
+
+/* --- 5. Accesibilidad: Reducción de Movimiento --- */
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+
+  .single-plant,
+  .leaf-left,
+  .leaf-left-2,
+  .leaf-right,
+  .leaf-right-2,
+  .leaf-apex,
+  .drop,
+  .spray-mist,
+  .splash-ring,
+  .bio-particle,
+  .sun-corona {
+    animation: none !important;
+  }
+
+  .relay-on .irrigation-system {
+    opacity: 1 !important;
+  }
+}
